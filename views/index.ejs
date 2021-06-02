@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+    integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+    crossorigin=""></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0
+    }
+
+    #mymap {
+      height: 100vh;
+    }
+  </style>
+  <title>My Track</title>
+</head>
+
+<body>
+
+  <div id="mymap"></div>
+
+  <script>
+
+    let stringCoordinates = "<%= coord %>";
+    let coordinates = stringCoordinates.split(";");
+    // console.log(coordinates);
+
+    const mymap = L.map('mymap');
+
+    const attribution =
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(mymap);
+
+    coordinates.forEach((c, i) => {
+      [lon, lat] = c.split(',').map(x => +x);
+      if (i == 0) mymap.setView([lon, lat], 18);
+      L.marker([lon, lat]).addTo(mymap);
+    })
+
+
+
+
+
+  </script>
+</body>
+
+</html>
