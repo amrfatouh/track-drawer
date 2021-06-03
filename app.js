@@ -17,6 +17,8 @@ var port = new SerialPort("COM9", {
 const parser = port.pipe(new Readline());
 parser.on("data", (line) => {
   [lon, lat, dist] = line.split(",");
+  lon = angle_to_decimal(lon);
+  lat = angle_to_decimal(lat);
   io.emit("new coordinate", { lon, lat, dist });
 });
 
@@ -29,3 +31,10 @@ app.get("/", (req, res) => {
 });
 
 http.listen(3000);
+
+function angle_to_decimal(nmea) {
+  let degrees = parseInt(nmea / 100);
+  let minutes = nmea - degrees * 100;
+  let dec = degrees + minutes / 60;
+  return dec;
+}
