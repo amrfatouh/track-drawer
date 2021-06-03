@@ -37,9 +37,18 @@
     socket.on('new coordinate', function (data) {
       mymap.setView([data.lon, data.lat], 18);
       L.marker([data.lon, data.lat]).addTo(mymap);
-      document.querySelector("#distance").innerHTML = `Distance: <span>${data.dist}</span> m`;
+      document.querySelector("#distance span").textContent = data.dist;
     });
 
+
+  // function changeValue(element, value) {
+  //   element.style.transition = "all 0.05s";
+  //   element.style.opacity = "0";
+  //   setTimeout(() => {
+  //     element.textContent = value;
+  //     element.style.opacity = "1";
+  //   }, 50);
+  // }
   </script>
 </body>
 

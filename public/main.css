@@ -21,4 +21,5 @@ body {
 }
 #distance span {
   color: rgb(107, 12, 12);
+  transition: all .05s;
 }
