@@ -16,5 +16,16 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "pkg": {
+    "assets": [
+      "index.html",
+      "public"
+    ],
+    "targets": [
+      "host"
+    ],
+    "outputPath": "dist"
+  },
+  "bin": "app.js"
 }
