@@ -1,26 +1,15 @@
 // this file is just for testing the server without connection to the port
 
-const path = require("path");
 const express = require("express");
 const app = express();
-app.listen(3000);
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const open = require("open");
 
-app.set("view engine", "ejs");
-app.set("views", "views");
-app.use(express.static(path.join(__dirname, "public")));
+open("http://localhost:3000");
 
-let depot = [
-  "30.12229, 31.3427, 100",
-  "30.12226, 31.34277, 110",
-  "30.12223, 31.34285, 120",
-  "30.12219, 31.34296, 130",
-  "30.12215, 31.34309, 140",
-  "30.12214, 31.34313, 150",
-  "30.12209, 31.34329, 160",
-  "30.12204, 31.34339, 170",
-  "30.12199, 31.3433, 180",
-  "30.12192, 31.34318, 190",
-];
+app.use(express.static(__dirname + "/public"));
+
 
 let coordinates = [
   "30.12177, 31.34205, 0",
@@ -33,16 +22,29 @@ let coordinates = [
   "30.12219, 31.34256, 70",
   "30.12226, 31.34264, 80",
   "30.12226, 31.34264, 90",
+  "30.12229, 31.3427, 100",
+  "30.12226, 31.34277, 110",
+  "30.12223, 31.34285, 120",
+  "30.12219, 31.34296, 130",
+  "30.12215, 31.34309, 140",
+  "30.12214, 31.34313, 150",
+  "30.12209, 31.34329, 160",
+  "30.12204, 31.34339, 170",
+  "30.12199, 31.3433, 180",
+  "30.12192, 31.34318, 190",
 ];
 
-app.get("/", (req, res, next) => {
-  res.render("index", {
-    coord: coordinates.join(";"),
-    doReload: Boolean(depot.length),
+  let interval = setInterval(() => {
+    if (coordinates.length) {
+      [lon, lat, dist] = coordinates[0].split(",");
+      io.emit("new coordinate", { lon, lat, dist });
+      coordinates.shift();
+      if (!coordinates.length) clearInterval(interval);
+    }
+  }, 3000);
+
+  app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
   });
-  if (depot.length) {
-    let x = depot[0];
-    depot.shift();
-    coordinates.push(x);
-  }
-});
+
+http.listen(3000);

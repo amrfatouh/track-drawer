@@ -1,38 +1,31 @@
-// ===================
-// WORKING WITH PORT
-// ===================
-
-// Import dependencies
+// port
 const SerialPort = require("serialport");
 const Readline = require("@serialport/parser-readline");
-const ByteLength = require("@serialport/parser-byte-length");
+// server
+const express = require("express");
+const app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const open = require("open");
 
 // Defining the serial port
 var port = new SerialPort("COM9", {
   baudRate: 9600,
 });
 
-let coordinates = [];
-
 // Read the data from the serial port
 const parser = port.pipe(new Readline());
 parser.on("data", (line) => {
-  console.log(line);
-  coordinates.push(line.split(",").map((x) => +x));
+  [lon, lat, dist] = line.split(",");
+  io.emit("new coordinate", { lon, lat, dist });
 });
 
-// ===================
-// WORKING WITH SERVER
-// ===================
-const path = require("path");
-const express = require("express");
-const app = express();
-app.listen(3000);
+open("http://localhost:3000");
 
-app.set("view engine", "ejs");
-app.set("views", "views");
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(__dirname + "/public"));
 
-app.get("/", (req, res, next) => {
-  res.render("index", { coord: coordinates.join(";"), doReload: true });
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
 });
+
+http.listen(3000);
