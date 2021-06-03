@@ -16,9 +16,9 @@ let coordinates = [];
 
 // Read the data from the serial port
 const parser = port.pipe(new Readline());
-parser.on("data", (char) => {
-  console.log(char);
-  coordinates.push(char.split(",").map((x) => +x));
+parser.on("data", (line) => {
+  console.log(line);
+  coordinates.push(line.split(",").map((x) => +x));
 });
 
 // ===================
@@ -34,5 +34,5 @@ app.set("views", "views");
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res, next) => {
-  res.render("index", { coord: coordinates.join(";") });
+  res.render("index", { coord: coordinates.join(";"), doReload: true });
 });

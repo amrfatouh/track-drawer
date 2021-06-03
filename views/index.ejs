@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <link rel="stylesheet" href="leaflet.css" />
+  <link rel="stylesheet" href="main.css" />
   <script src="leaflet.js"></script>
   <style>
     body {
@@ -22,15 +23,18 @@
 
 <body>
 
+  <div id="distance"></div>
   <div id="mymap"></div>
 
   <script>
 
     let stringCoordinates = "<%= coord %>";
-    let coordinates = stringCoordinates.split(";");
+    let coordinates = [];
+    if (stringCoordinates) coordinates = stringCoordinates.split(";");
     // console.log(coordinates);
 
     const mymap = L.map('mymap');
+    mymap.setView([30.0463, 31.2486], 10);
 
     const attribution =
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -39,10 +43,19 @@
     tiles.addTo(mymap);
 
     coordinates.forEach((c, i) => {
-      [lon, lat] = c.split(',').map(x => +x);
-      if (i == 0) mymap.setView([lon, lat], 18);
-      L.marker([lon, lat]).addTo(mymap);
-    })
+      if (coordinates.length) {
+        [lon, lat, dist] = c.split(',').map(x => +x);
+        if (i == 0) mymap.setView([lon, lat], 18);
+        L.marker([lon, lat]).addTo(mymap);
+        document.querySelector("#distance").textContent = `Distance: ${dist} m`;
+      }
+    });
+
+          let doReload = "<%= doReload %>";
+          if (doReload === "true")
+            setTimeout(() => {
+              location.reload();
+            }, 3000);
 
   </script>
 </body>
